@@ -4,20 +4,18 @@ from datetime import datetime
 
 input_path = input("Enter path to PDF: ")
 output_path = input("Enter Output Path-Folder: ")
-if output_path[-1] != '\\':
-    output_path += '\\splitter'
-else:
-    output_path += 'splitter'
+
+output_folder = os.path.join(output_path, 'splitter')
 
 with open(input_path, 'rb') as input_file:
     pdf_reader = PyPDF2.PdfReader(input_file)
 
-    for page_num in range(len(pdf_reader.pages)):
+    for page_num, page in enumerate(pdf_reader.pages):
         pdf_writer = PyPDF2.PdfWriter()
-        pdf_writer.add_page(pdf_reader.pages[page_num])
+        pdf_writer.add_page(page)
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_filename = f"{output_path}_{page_num + 1}_{timestamp}.pdf"
+        # Use f-string to generate output filename
+        output_filename = f"{output_folder}_{page_num + 1}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
 
         with open(output_filename, 'wb') as output_file:
             pdf_writer.write(output_file)
